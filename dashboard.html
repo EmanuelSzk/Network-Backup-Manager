@@ -6,50 +6,64 @@
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f4f4f9;
+        background: #181828; /* Fondo más oscuro */
         margin: 0;
         padding: 2rem;
-        color: #222;
+        color: #e0e0e0; /* Letras claras */
+      }
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
       }
       .actions button {
-        margin-right: 0.5rem;
-        margin-bottom: 1rem;
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.5rem;
         border: none;
-        border-radius: 5px;
-        background: #764ba2;
+        border-radius: 20px;
+        background: linear-gradient(90deg, #764ba2 40%, #667eea 100%);
         color: #fff;
         font-weight: bold;
+        font-size: 1rem;
         cursor: pointer;
-        transition: background 0.2s;
+        box-shadow: 0 2px 8px #0003;
+        transition: background 0.2s, transform 0.2s;
       }
       .actions button:hover {
-        background: #5b3682;
+        background: linear-gradient(90deg, #5b3682 40%, #4455aa 100%);
+        transform: translateY(-2px) scale(1.05);
       }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 2rem;
-        background: #fff;
-        box-shadow: 0 2px 8px #0001;
+        background: #23234a;
+        box-shadow: 0 2px 8px #0003;
       }
       th,
       td {
         padding: 0.75rem;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #333;
         text-align: left;
+        color: #e0e0e0; /* Letras claras en tabla */
       }
       th {
         background: #764ba2;
         color: #fff;
       }
       .form-section {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px #0001;
-        max-width: 600px;
-        margin-bottom: 2rem;
+        background: #23234a;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 16px #0005;
+        width: 100vw;
+        max-width: none;
+        margin: 2rem 0 0 -2rem;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        transform: translateX(-50%);
+        color: #e0e0e0;
       }
       .form-group {
         margin-bottom: 1rem;
@@ -58,15 +72,25 @@
         display: block;
         font-weight: 600;
         margin-bottom: 0.3rem;
+        color: #bdbdfc; /* Letras de label más claras */
       }
       input[type="text"],
       input[type="password"],
       input[type="number"] {
         width: 100%;
         padding: 0.5rem;
-        border: 1px solid #ccc;
+        border: 1px solid #555;
         border-radius: 4px;
         font-size: 1rem;
+        background: #181828;
+        color: #e0e0e0;
+      }
+      input[type="text"]:focus,
+      input[type="password"]:focus,
+      input[type="number"]:focus {
+        outline: none;
+        border-color: #764ba2;
+        background: #23234a;
       }
       .radio-group,
       .checkbox-group {
@@ -88,15 +112,23 @@
       .form-actions button:hover {
         background: #5b3682;
       }
+      @media (max-width: 900px) {
+        .form-section {
+          width: 100vw;
+          margin-left: -2rem;
+          margin-right: -2rem;
+          border-radius: 0;
+        }
+      }
     </style>
   </head>
   <body>
     <h1>Software de Backup - Dispositivos de Red</h1>
     <div class="actions">
-      <button>[Nuevo]</button>
-      <button>[Editar]</button>
-      <button>[Eliminar]</button>
-      <button>[Realizar Backup]</button>
+      <button>Nuevo</button>
+      <button>Editar</button>
+      <button>Eliminar</button>
+      <button>Realizar Backup</button>
     </div>
 
     <h2>Lista de Dispositivos</h2>
@@ -159,7 +191,7 @@
           <label for="ssh">Puerto SSH:</label>
           <input type="number" id="ssh" name="ssh" value="22" />
         </div>
-        <h3>Configuración de Backup</h3>
+        <h3 style="color: #bdbdfc">Configuración de Backup</h3>
         <div class="form-group">
           <label>Periodicidad de Backup:</label>
           <div class="radio-group">
