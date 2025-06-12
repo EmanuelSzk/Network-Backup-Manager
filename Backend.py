@@ -18,6 +18,16 @@ class Usuario(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
+class Dispositivos(db.Model):
+    __tablename__ = 'dispositivos'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    ip = db.Column(db.String(50), nullable=False)
+    tipo = db.Column(db.String(50), nullable=False)
+    usuario = db.Column(db.String(50), nullable=False)
+    contrasena = db.Column(db.String(100), nullable=False)
+    puerto_ssh = db.Column(db.Integer, nullable=False)
+
 @app.route('/login', methods=['POST'])
 def login():        
     data = request.json
@@ -31,8 +41,35 @@ def login():
     else:
         return jsonify({"success": False, "message": "Usuario o contraseña incorrectos."}), 401
 
+@app.route('/dispositivos', methods=['GET'])
+def obtener_dispositivos():
+    dispositivos = Dispositivos.query.all()
+    lista = []
+    for d in dispositivos:
+        lista.append({
+            "id": d.id,
+            "nombre": d.nombre,
+            "ip": d.ip,
+            "tipo": d.tipo
+        })
+    return jsonify(lista)
+
+@app.route('/dispositivos/<int:id>', methods=['GET'])
+def obtener_dispositivo(id):
+    dispositivo = Dispositivos.query.get_or_404(id)
+    return jsonify({
+        'id': dispositivo.id,
+        'nombre': dispositivo.nombre,
+        'ip': dispositivo.ip,
+        'tipo': dispositivo.tipo,
+        'usuario': dispositivo.usuario,
+        'contrasena': dispositivo.contrasena,
+        'puerto_ssh': dispositivo.puerto_ssh
+    })
+
+
 if __name__ == '__main__':
     # Crea las tablas si no existen (solo la primera vez)
-    with app.app_context():
-        db.create_all()
+    #with app.app_context():
+        #db.create_all()
     app.run(port=5000)
