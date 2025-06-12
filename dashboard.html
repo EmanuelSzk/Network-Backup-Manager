@@ -6,10 +6,10 @@
     <style>
       body {
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #181828; /* Fondo más oscuro */
+        background: #181828;
         margin: 0;
         padding: 2rem;
-        color: #e0e0e0; /* Letras claras */
+        color: #e0e0e0;
       }
       .actions {
         display: flex;
@@ -45,20 +45,21 @@
         padding: 0.75rem;
         border-bottom: 1px solid #333;
         text-align: left;
-        color: #e0e0e0; /* Letras claras en tabla */
+        color: #e0e0e0;
       }
       th {
         background: #764ba2;
         color: #fff;
       }
       .form-section {
+        display: none;
         background: #23234a;
         padding: 2rem;
         border-radius: 12px;
         box-shadow: 0 2px 16px #0005;
-        width: 100vw;
+        width: 92vw;
         max-width: none;
-        margin: 2rem 0 0 -2rem;
+        margin: 2rem 0 0 0;
         position: relative;
         left: 50%;
         right: 50%;
@@ -72,7 +73,7 @@
         display: block;
         font-weight: 600;
         margin-bottom: 0.3rem;
-        color: #bdbdfc; /* Letras de label más claras */
+        color: #bdbdfc;
       }
       input[type="text"],
       input[type="password"],
@@ -125,8 +126,8 @@
   <body>
     <h1>Software de Backup - Dispositivos de Red</h1>
     <div class="actions">
-      <button>Nuevo</button>
-      <button>Editar</button>
+      <button onclick="mostrarFormulario()">Nuevo</button>
+      <button onclick="mostrarFormulario()">Editar</button>
       <button>Eliminar</button>
       <button>Realizar Backup</button>
     </div>
@@ -159,37 +160,32 @@
       </tbody>
     </table>
 
-    <div class="form-section">
+    <div class="form-section" id="formularioBackup">
       <h2>Detalles del Dispositivo</h2>
       <form>
         <div class="form-group">
           <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" value="Router Central" />
+          <input type="text" id="nombre" name="nombre" value="" />
         </div>
         <div class="form-group">
           <label for="ip">IP:</label>
-          <input type="text" id="ip" name="ip" value="192.168.1.1" />
+          <input type="text" id="ip" name="ip" value="" />
         </div>
         <div class="form-group">
           <label for="tipo">Tipo:</label>
-          <input type="text" id="tipo" name="tipo" value="Cisco" />
+          <input type="text" id="tipo" name="tipo" value="" />
         </div>
         <div class="form-group">
           <label for="usuario">Usuario:</label>
-          <input type="text" id="usuario" name="usuario" value="admin" />
+          <input type="text" id="usuario" name="usuario" value="" />
         </div>
         <div class="form-group">
           <label for="contrasena">Contraseña:</label>
-          <input
-            type="password"
-            id="contrasena"
-            name="contrasena"
-            value="********"
-          />
+          <input type="password" id="contrasena" name="contrasena" value="" />
         </div>
         <div class="form-group">
           <label for="ssh">Puerto SSH:</label>
-          <input type="number" id="ssh" name="ssh" value="22" />
+          <input type="number" id="ssh" name="ssh" value="" />
         </div>
         <h3 style="color: #bdbdfc">Configuración de Backup</h3>
         <div class="form-group">
@@ -211,7 +207,7 @@
         </div>
         <div class="form-group">
           <label for="hora">Hora:</label>
-          <input type="text" id="hora" name="hora" value="08:00" />
+          <input type="text" id="hora" name="hora" value="" />
         </div>
         <div class="form-group">
           <label>Día semana:</label>
@@ -248,10 +244,65 @@
         </div>
         <div class="form-actions">
           <button type="submit">Guardar</button>
-          <button type="button">Cancelar</button>
+          <button type="button" onclick="ocultarFormulario()">Cancelar</button>
           <button type="button">Probar Conexión SSH</button>
         </div>
       </form>
     </div>
+
+    <script>
+      function mostrarFormulario() {
+        const formulario = document.getElementById("formularioBackup");
+        if (formulario.style.display === "block") {
+          formulario.style.display = "none";
+        } else {
+          formulario.style.display = "block";
+        }
+      }
+
+      function ocultarFormulario() {
+        const formulario = document.getElementById("formularioBackup");
+        formulario.style.display = "none";
+      }
+
+      document
+        .querySelector("#formularioBackup form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const datos = {
+            nombre: document.getElementById("nombre").value,
+            ip: document.getElementById("ip").value,
+            tipo: document.getElementById("tipo").value,
+            usuario: document.getElementById("usuario").value,
+            contrasena: document.getElementById("contrasena").value,
+            ssh: document.getElementById("ssh").value,
+            periodicidad: document.querySelector(
+              'input[name="periodicidad"]:checked'
+            )?.value,
+            hora: document.getElementById("hora").value,
+            diasemana: Array.from(
+              document.querySelectorAll('input[name="diasemana"]:checked')
+            ).map((cb) => cb.value),
+            diames: document.querySelector('input[name="diames"]').value,
+            carpeta: document.getElementById("carpeta").value,
+          };
+
+          const resp = await fetch("http://localhost:5000/dispositivo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(datos),
+          });
+
+          const data = await resp.json();
+          if (data.success) {
+            alert(data.message);
+            ocultarFormulario();
+            // Aquí podrías actualizar la tabla de dispositivos si lo deseas
+          } else {
+            alert("Error al guardar el dispositivo");
+          }
+        });
+    </script>
   </body>
 </html>
