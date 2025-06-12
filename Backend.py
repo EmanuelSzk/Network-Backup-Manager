@@ -19,13 +19,13 @@ class Usuario(db.Model):
     password = db.Column(db.String(100), nullable=False)
 
 class Dispositivo(db.Model):
-    
+    id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(100), nullable=False)
     ip = db.Column(db.String(50), nullable=False)
-    Tipo = db.Column(db.String(50), nullable=False)
-    Usuario = db.Column(db.String(50), nullable=False)
+    tipo = db.Column(db.String(50), nullable=False)
+    usuario = db.Column(db.String(50), nullable=False)
     contrasena = db.Column(db.String(100), nullable=False)
-    puerto_ssh = db.Column(db..Integer, nulleable=False)
+    puerto_ssh = db.Column(db.Integer, nullable=False)
 
 
 @app.route('/login', methods=['POST'])
