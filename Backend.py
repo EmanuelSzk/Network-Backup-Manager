@@ -67,6 +67,37 @@ def obtener_dispositivo(id):
         'puerto_ssh': dispositivo.puerto_ssh
     })
 
+@app.route('/dispositivos/<int:id>', methods=['DELETE'])
+def eliminar_dispositivo(id):
+    dispositivo = Dispositivos.query.get_or_404(id)
+    db.session.delete(dispositivo)
+    db.session.commit()
+    return jsonify({"success": True, "message": "Dispositivo eliminado correctamente"})
+
+@app.route('/dispositivo', methods=['POST'])
+def agregar_dispositivo():
+    data = request.json
+    
+    nombre = data.get('nombre')
+    ip = data.get('ip')
+    tipo = data.get('tipo')
+    usuario = data.get('usuario')
+    contrasena = data.get('contrasena')
+    ssh = data.get('ssh')
+    
+    nuevo_dispositivo = Dispositivos(
+        nombre=nombre,
+        ip=ip,
+        tipo=tipo,
+        usuario=usuario,
+        contrasena=contrasena,
+        puerto_ssh=ssh
+        
+    )
+    db.session.add(nuevo_dispositivo)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Dispositivo agregado correctamente"})
 
 if __name__ == '__main__':
     # Crea las tablas si no existen (solo la primera vez)

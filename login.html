@@ -124,13 +124,13 @@
         const username = loginForm.username.value.trim();
         const password = loginForm.password.value;
 
-        fetch('http://localhost:5000/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+        fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
         })
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             if (data.success) {
               // redirige a la página principal
               window.location.href = "main.html";
@@ -140,7 +140,6 @@
             }
           });
       });
-
     </script>
   </body>
 </html>
