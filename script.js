@@ -1,4 +1,5 @@
 let formularioMostrado = false;
+let nuevo = null;
 
 function mostrarFormulario() {
   const formulario = document.getElementById("formularioBackup");
@@ -8,8 +9,9 @@ function mostrarFormulario() {
   }
 }
 
+// Vacía campos
 function nuevoDispositivo() {
-  // Vaciar todos los campos
+  nuevo = true;
   document.getElementById("nombre").value = "";
   document.getElementById("ip").value = "";
   document.getElementById("tipo").value = "";
@@ -26,7 +28,13 @@ function nuevoDispositivo() {
 
   mostrarFormulario();
 }
+
 let dispositivoSeleccionado = null;
+
+function editarDispostivo() {
+  mostrarFormulario();
+  nuevo = false;
+}
 
 function seleccionarDispositivo(fila) {
   // Desmarcar otras filas
@@ -43,7 +51,6 @@ function seleccionarDispositivo(fila) {
   fetch(`http://localhost:5000/dispositivos/${id}`)
     .then(response => response.json())
     .then(dispositivo => {
-      // Llenar formulario con datos
       document.getElementById("nombre").value = dispositivo.nombre;
       document.getElementById("ip").value = dispositivo.ip;
       document.getElementById("tipo").value = dispositivo.tipo;
@@ -52,10 +59,8 @@ function seleccionarDispositivo(fila) {
       document.getElementById("ssh").value = dispositivo.puerto_ssh;
       // Aquí podrías guardar el ID para usarlo luego si implementás "Editar"
       dispositivoSeleccionado = dispositivo;
-
-      mostrarFormulario(); // Mostrar formulario al seleccionar
-        })
-        .catch(error => {
+    })
+    .catch(error => {
       console.error("Error al obtener dispositivo:", error);
       alert("No se pudo cargar la información del dispositivo");
     });
@@ -70,38 +75,39 @@ fetch('http://localhost:5000/dispositivos')
       fila.onclick = function () { seleccionarDispositivo(fila); };
       fila.dataset.id = dispositivo.id; // Guarda el ID
       fila.innerHTML = `
-      <td>${dispositivo.nombre}</td>
-      <td>${dispositivo.ip}</td>
-      <td>${dispositivo.tipo}</td>
+        <td>${dispositivo.nombre}</td>
+        <td>${dispositivo.ip}</td>
+        <td>${dispositivo.tipo}</td>
       `;
       tbody.appendChild(fila);
     });
   })
   .catch(error => console.error('Error al cargar los dispositivos:', error));
-  
-  document
-    .querySelector("#formularioBackup form")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
 
-      const datos = {
-        nombre: document.getElementById("nombre").value.trim(),
-        ip: document.getElementById("ip").value.trim(),
-        tipo: document.getElementById("tipo").value.trim(),
-        usuario: document.getElementById("usuario").value.trim(),
-        contrasena: document.getElementById("contrasena").value.trim(),
-        ssh: document.getElementById("ssh").value.trim(),
-        periodicidad: document.querySelector(
-          'input[name="periodicidad"]:checked'
-        )?.value,
-        hora: document.getElementById("hora").value.trim(),
-        diasemana: Array.from(
-          document.querySelectorAll('input[name="diasemana"]:checked')
-        ).map((cb) => cb.value.trim()),
-        diames: document.querySelector('input[name="diames"]').value.trim(),
-        carpeta: document.getElementById("carpeta").value.trim(),
-      };
+document
+  .querySelector("#formularioBackup form")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
+    const datos = {
+      nombre: document.getElementById("nombre").value.trim(),
+      ip: document.getElementById("ip").value.trim(),
+      tipo: document.getElementById("tipo").value.trim(),
+      usuario: document.getElementById("usuario").value.trim(),
+      contrasena: document.getElementById("contrasena").value.trim(),
+      ssh: document.getElementById("ssh").value.trim(),
+      periodicidad: document.querySelector(
+        'input[name="periodicidad"]:checked'
+      )?.value,
+      hora: document.getElementById("hora").value.trim(),
+      diasemana: Array.from(
+        document.querySelectorAll('input[name="diasemana"]:checked')
+      ).map((cb) => cb.value.trim()),
+      diames: document.querySelector('input[name="diames"]').value.trim(),
+      carpeta: document.getElementById("carpeta").value.trim(),
+    };
+
+    if (nuevo) {
       const resp = await fetch("http://localhost:5000/dispositivo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -114,4 +120,26 @@ fetch('http://localhost:5000/dispositivos')
       } else {
         alert("Error al guardar el dispositivo");
       }
-    }); 
+    } else {
+      // Agregar el id del dispositivo seleccionado
+      if (dispositivoSeleccionado && dispositivoSeleccionado.id) {
+        datos.id = dispositivoSeleccionado.id;
+      } else {
+        alert("No hay dispositivo seleccionado para editar.");
+        return;
+      }
+
+      const resp = await fetch("http://localhost:5000/Editar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos),
+      });
+
+      const data = await resp.json();
+      if (data.success) {
+        alert(data.message);
+      } else {
+        alert("Error al guardar el dispositivo");
+      }
+    }
+  });
