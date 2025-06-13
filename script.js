@@ -22,8 +22,12 @@ function nuevoDispositivo() {
   document.getElementById("carpeta").value = "C:/backups/";
 
   // Resetear checkboxes y opciones
-  document.querySelectorAll('input[name="diasemana"]').forEach(cb => cb.checked = false);
-  document.querySelector('input[name="periodicidad"][value="diario"]').checked = true;
+  document
+    .querySelectorAll('input[name="diasemana"]')
+    .forEach((cb) => (cb.checked = false));
+  document.querySelector(
+    'input[name="periodicidad"][value="diario"]'
+  ).checked = true;
   document.querySelector('input[name="diames"]').value = "1";
 
   mostrarFormulario();
@@ -39,7 +43,7 @@ function editarDispostivo() {
 function seleccionarDispositivo(fila) {
   // Desmarcar otras filas
   const filas = document.querySelectorAll("tbody tr");
-  filas.forEach(f => f.classList.remove("seleccionado"));
+  filas.forEach((f) => f.classList.remove("seleccionado"));
 
   // Marcar esta fila
   fila.classList.add("seleccionado");
@@ -66,13 +70,15 @@ function seleccionarDispositivo(fila) {
     });
 }
 
-fetch('http://localhost:5000/dispositivos')
-  .then(response => response.json())
-  .then(data => {
+fetch("http://localhost:5000/dispositivos")
+  .then((response) => response.json())
+  .then((data) => {
     const tbody = document.getElementById("tablaDispositivos");
-    data.forEach(dispositivo => {
+    data.forEach((dispositivo) => {
       const fila = document.createElement("tr");
-      fila.onclick = function () { seleccionarDispositivo(fila); };
+      fila.onclick = function () {
+        seleccionarDispositivo(fila);
+      };
       fila.dataset.id = dispositivo.id; // Guarda el ID
       fila.innerHTML = `
         <td>${dispositivo.nombre}</td>
@@ -143,3 +149,26 @@ document
       }
     }
   });
+
+document.getElementById("btnEliminar").addEventListener("click", function () {
+  if (!dispositivoSeleccionado) {
+    alert("Selecciona un dispositivo primero.");
+    return;
+  }
+  if (!confirm("¿Estás seguro de que deseas eliminar este dispositivo?")) {
+    return;
+  }
+  fetch(`http://localhost:5000/dispositivos/${dispositivoSeleccionado.id}`, {
+    method: "DELETE",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert(data.message);
+      cargarDispositivos();
+      dispositivoSeleccionado = null;
+      // Quitar selección visual si tienes una clase .selected
+      document
+        .querySelectorAll("#tablaDispositivos tr.selected")
+        .forEach((tr) => tr.classList.remove("selected"));
+    });
+});

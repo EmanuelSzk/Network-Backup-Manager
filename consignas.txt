@@ -16,3 +16,6 @@ Objetivos Específicos:
 • Automatizar la eliminación de respaldos antiguos (+6 meses).
 • Incorporar opciones para definir la frecuencia de ejecución.
 • Validar el sistema mediante pruebas funcionales.
+
+
+#para editar: cuando selecciono uno de los dispositivos en la lista de dispositivos , ese dispositivo se guarda en la variable dispositivo_seleccionado y ahi se muestran los detalles del dispositivo dispositivo_seleccionado , y que se guarden los cambios del dispositivo en la base de datos 
