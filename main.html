@@ -1,99 +1,122 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Software de Backup - Dispositivos de Red</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Software de Backup - Dispositivos de Red</h1>
-  <div class="actions">
-    <button onclick="nuevoDispositivo()">Nuevo</button>
-    <button onclick="editarDispostivo()">Editar</button>
-    <button id="btnEliminar">Eliminar</button>
-    <button>Realizar Backup</button>
-  </div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Software de Backup - Dispositivos de Red</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Software de Backup - Dispositivos de Red</h1>
+    <div class="actions">
+      <button onclick="nuevoDispositivo()">Nuevo</button>
+      <button onclick="editarDispostivo()">Editar</button>
+      <button id="btnEliminar">Eliminar</button>
+      <button>Realizar Backup</button>
+    </div>
 
-  <h2>Lista de Dispositivos</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>IP</th>
-        <th>Tipo</th>
-      </tr>
-    </thead>
+    <h2>Lista de Dispositivos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>IP</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
 
-    <tbody id="tablaDispositivos"></tbody>
+      <tbody id="tablaDispositivos"></tbody>
+    </table>
 
-  </table>
-
-  <div class="form-section" id="formularioBackup">
-    <h2>Detalles del Dispositivo</h2>
-    <form>
-      <div class="form-group">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="" />
-      </div>
-      <div class="form-group">
-        <label for="ip">IP:</label>
-        <input type="text" id="ip" name="ip" value="" />
-      </div>
-      <div class="form-group">
-        <label for="tipo">Tipo:</label>
-        <input type="text" id="tipo" name="tipo" value="" />
-      </div>
-      <div class="form-group">
-        <label for="usuario">Usuario:</label>
-        <input type="text" id="usuario" name="usuario" value="" />
-      </div>
-      <div class="form-group">
-        <label for="contrasena">Contrasena:</label>
-        <input type="password" id="contrasena" name="contrasena" value="" />
-      </div>
-      <div class="form-group">
-        <label for="ssh">Puerto SSH:</label>
-        <input type="number" id="ssh" name="ssh" value="" />
-      </div>
-      <h3 style="color: #bdbdfc">Configuración de Backup</h3>
-      <div class="form-group">
-        <label>Periodicidad de Backup:</label>
-        <div class="radio-group">
-          <label><input type="radio" name="periodicidad" value="diario" checked /> Diario</label>
-          <label><input type="radio" name="periodicidad" value="semanal" /> Semanal</label>
-          <label><input type="radio" name="periodicidad" value="mensual" /> Mensual</label>
+    <div class="form-section" id="formularioBackup">
+      <h2>Detalles del Dispositivo</h2>
+      <form>
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" value="" />
         </div>
-      </div>
-      <div class="form-group">
-        <label for="hora">Hora:</label>
-        <input type="text" id="hora" name="hora" value="08:00" />
-      </div>
-      <div class="form-group">
-        <label>Día semana:</label>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="diasemana" value="lunes" checked /> Lunes</label>
-          <label><input type="checkbox" name="diasemana" value="martes" /> Martes</label>
-          <label><input type="checkbox" name="diasemana" value="miercoles" /> Miércoles</label>
-          <label><input type="checkbox" name="diasemana" value="jueves" /> Jueves</label>
-          <label><input type="checkbox" name="diasemana" value="viernes" /> Viernes</label>
+        <div class="form-group">
+          <label for="ip">IP:</label>
+          <input type="text" id="ip" name="ip" value="" />
         </div>
-      </div>
-      <div class="form-group">
-        <label>Día mes:</label>
-        <input type="text" name="diames" value="1" />
-      </div>
-      <div class="form-group">
-        <label for="carpeta">Carpeta local:</label>
-        <input type="text" id="carpeta" name="carpeta" value="C:/backups/" />
-      </div>
-      <div class="form-actions">
-        <button type="submit">Guardar</button>
-        <button type="button" onclick="ocultarFormulario()">Cancelar</button>
-        <button type="button">Probar Conexión SSH</button>
-      </div>
-    </form>
-  </div>
+        <div class="form-group">
+          <label for="tipo">Tipo:</label>
+          <input type="text" id="tipo" name="tipo" value="" />
+        </div>
+        <div class="form-group">
+          <label for="usuario">Usuario:</label>
+          <input type="text" id="usuario" name="usuario" value="" />
+        </div>
+        <div class="form-group">
+          <label for="contrasena">Contrasena:</label>
+          <input type="password" id="contrasena" name="contrasena" value="" />
+        </div>
+        <div class="form-group">
+          <label for="ssh">Puerto SSH:</label>
+          <input type="number" id="ssh" name="ssh" value="" />
+        </div>
+        <h3 style="color: #bdbdfc">Configuración de Backup</h3>
+        <div class="form-group">
+          <label>Periodicidad de Backup:</label>
+          <div class="radio-group">
+            <label
+              ><input type="radio" name="periodicidad" value="diario" checked />
+              Diario</label
+            >
+            <label
+              ><input type="radio" name="periodicidad" value="semanal" />
+              Semanal</label
+            >
+            <label
+              ><input type="radio" name="periodicidad" value="mensual" />
+              Mensual</label
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="hora">Hora:</label>
+          <input type="text" id="hora" name="hora" value="08:00" />
+        </div>
+        <div class="form-group">
+          <label>Día semana:</label>
+          <div class="checkbox-group">
+            <label
+              ><input type="checkbox" name="diasemana" value="lunes" checked />
+              Lunes</label
+            >
+            <label
+              ><input type="checkbox" name="diasemana" value="martes" />
+              Martes</label
+            >
+            <label
+              ><input type="checkbox" name="diasemana" value="miercoles" />
+              Miércoles</label
+            >
+            <label
+              ><input type="checkbox" name="diasemana" value="jueves" />
+              Jueves</label
+            >
+            <label
+              ><input type="checkbox" name="diasemana" value="viernes" />
+              Viernes</label
+            >
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Día mes:</label>
+          <input type="text" name="diames" value="1" />
+        </div>
+        <div class="form-group">
+          <label for="carpeta">Carpeta local:</label>
+          <input type="text" id="carpeta" name="carpeta" value="C:/backups/" />
+        </div>
+        <div class="form-actions">
+          <button type="submit">Guardar</button>
+          <button type="button" onclick="ocultarFormulario()">Cancelar</button>
+          <button type="button">Probar Conexión SSH</button>
+        </div>
+      </form>
+    </div>
 
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>

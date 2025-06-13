@@ -20,8 +20,12 @@ function nuevoDispositivo() {
   document.getElementById("carpeta").value = "C:/backups/";
 
   // Resetear checkboxes y opciones
-  document.querySelectorAll('input[name="diasemana"]').forEach(cb => cb.checked = false);
-  document.querySelector('input[name="periodicidad"][value="diario"]').checked = true;
+  document
+    .querySelectorAll('input[name="diasemana"]')
+    .forEach((cb) => (cb.checked = false));
+  document.querySelector(
+    'input[name="periodicidad"][value="diario"]'
+  ).checked = true;
   document.querySelector('input[name="diames"]').value = "1";
 
   mostrarFormulario();
@@ -31,7 +35,7 @@ let dispositivoSeleccionado = null;
 function seleccionarDispositivo(fila) {
   // Desmarcar otras filas
   const filas = document.querySelectorAll("tbody tr");
-  filas.forEach(f => f.classList.remove("seleccionado"));
+  filas.forEach((f) => f.classList.remove("seleccionado"));
 
   // Marcar esta fila
   fila.classList.add("seleccionado");
@@ -41,8 +45,8 @@ function seleccionarDispositivo(fila) {
 
   // Hacer GET al backend para traer los datos completos
   fetch(`http://localhost:5000/dispositivos/${id}`)
-    .then(response => response.json())
-    .then(dispositivo => {
+    .then((response) => response.json())
+    .then((dispositivo) => {
       // Llenar formulario con datos
       document.getElementById("nombre").value = dispositivo.nombre;
       document.getElementById("ip").value = dispositivo.ip;
@@ -54,64 +58,88 @@ function seleccionarDispositivo(fila) {
       dispositivoSeleccionado = dispositivo;
 
       mostrarFormulario(); // Mostrar formulario al seleccionar
-        })
-        .catch(error => {
+    })
+    .catch((error) => {
       console.error("Error al obtener dispositivo:", error);
       alert("No se pudo cargar la información del dispositivo");
     });
 }
 
-fetch('http://localhost:5000/dispositivos')
-  .then(response => response.json())
-  .then(data => {
+fetch("http://localhost:5000/dispositivos")
+  .then((response) => response.json())
+  .then((data) => {
     const tbody = document.getElementById("tablaDispositivos");
-    data.forEach(dispositivo => {
+    data.forEach((dispositivo) => {
       const fila = document.createElement("tr");
-      fila.onclick = function () { seleccionarDispositivo(fila); };
+      fila.onclick = function () {
+        seleccionarDispositivo(fila);
+      };
       fila.dataset.id = dispositivo.id; // Guarda el ID
       fila.innerHTML = `
-      <td>${dispositivo.nombre}</td>
-      <td>${dispositivo.ip}</td>
-      <td>${dispositivo.tipo}</td>
-      `;
+        <td>${dispositivo.nombre}</td>
+        <td>${dispositivo.ip}</td>
+        <td>${dispositivo.tipo}</td>
+        `;
       tbody.appendChild(fila);
     });
   })
-  .catch(error => console.error('Error al cargar los dispositivos:', error));
-  
-  document
-    .querySelector("#formularioBackup form")
-    .addEventListener("submit", async function (e) {
-      e.preventDefault();
+  .catch((error) => console.error("Error al cargar los dispositivos:", error));
 
-      const datos = {
-        nombre: document.getElementById("nombre").value.trim(),
-        ip: document.getElementById("ip").value.trim(),
-        tipo: document.getElementById("tipo").value.trim(),
-        usuario: document.getElementById("usuario").value.trim(),
-        contrasena: document.getElementById("contrasena").value.trim(),
-        ssh: document.getElementById("ssh").value.trim(),
-        periodicidad: document.querySelector(
-          'input[name="periodicidad"]:checked'
-        )?.value,
-        hora: document.getElementById("hora").value.trim(),
-        diasemana: Array.from(
-          document.querySelectorAll('input[name="diasemana"]:checked')
-        ).map((cb) => cb.value.trim()),
-        diames: document.querySelector('input[name="diames"]').value.trim(),
-        carpeta: document.getElementById("carpeta").value.trim(),
-      };
+document
+  .querySelector("#formularioBackup form")
+  .addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      const resp = await fetch("http://localhost:5000/dispositivo", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(datos),
-      });
+    const datos = {
+      nombre: document.getElementById("nombre").value.trim(),
+      ip: document.getElementById("ip").value.trim(),
+      tipo: document.getElementById("tipo").value.trim(),
+      usuario: document.getElementById("usuario").value.trim(),
+      contrasena: document.getElementById("contrasena").value.trim(),
+      ssh: document.getElementById("ssh").value.trim(),
+      periodicidad: document.querySelector('input[name="periodicidad"]:checked')
+        ?.value,
+      hora: document.getElementById("hora").value.trim(),
+      diasemana: Array.from(
+        document.querySelectorAll('input[name="diasemana"]:checked')
+      ).map((cb) => cb.value.trim()),
+      diames: document.querySelector('input[name="diames"]').value.trim(),
+      carpeta: document.getElementById("carpeta").value.trim(),
+    };
 
-      const data = await resp.json();
-      if (data.success) {
-        alert(data.message);
-      } else {
-        alert("Error al guardar el dispositivo");
-      }
-    }); 
+    const resp = await fetch("http://localhost:5000/dispositivo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
+
+    const data = await resp.json();
+    if (data.success) {
+      alert(data.message);
+    } else {
+      alert("Error al guardar el dispositivo");
+    }
+  });
+
+document.getElementById("btnEliminar").addEventListener("click", function () {
+  if (!dispositivoSeleccionado) {
+    alert("Selecciona un dispositivo primero.");
+    return;
+  }
+  if (!confirm("¿Estás seguro de que deseas eliminar este dispositivo?")) {
+    return;
+  }
+  fetch(`http://localhost:5000/dispositivos/${dispositivoSeleccionado.id}`, {
+    method: "DELETE",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert(data.message);
+      cargarDispositivos();
+      dispositivoSeleccionado = null;
+      // Quitar selección visual si tienes una clase .selected
+      document
+        .querySelectorAll("#tablaDispositivos tr.selected")
+        .forEach((tr) => tr.classList.remove("selected"));
+    });
+});

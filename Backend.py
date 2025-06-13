@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuración de la base de datos PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:110402BES44150784@localhost:5432/network_backup'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:44987813@localhost:5432/network_backup'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inicializar SQLAlchemy
