@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+import paramiko
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -116,8 +119,53 @@ def editar_dispositivo():
         db.session.commit()
         return jsonify({"success": True, "message": "Dispositivo actualizado"})
 
+@app.route('/backup/<int:id>', methods=['POST'])
+def backup_dispositivo(id):
+    dispositivo = Dispositivos.query.get(id)
+    if not dispositivo:
+        return jsonify({"success": False, "message": "Dispositivo no encontrado"}), 404
+
+    ip = dispositivo.ip
+    usuario = dispositivo.usuario
+    contrasena = dispositivo.contrasena
+    puerto = dispositivo.puerto_ssh
+
+    # Comando típico para Cisco/IOS, adaptalo si usás otro sistema
+    comando = "show running-config"
+
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, port=puerto, username=usuario, password=contrasena, timeout=10)
+        stdin, stdout, stderr = ssh.exec_command(comando)
+        salida = stdout.read().decode()
+        ssh.close()
+    except Exception as e:
+        print(f"Error SSH: {e}")
+        return jsonify({"success": False, "message": f"Error de conexión SSH: {e}"}), 500
+
+    if not salida:
+        return jsonify({"success": False, "message": "No se pudo obtener la configuración"}), 500
+
+    # Carpeta y nombre de archivo
+    carpeta = "C:/backups/"
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
+    fecha = datetime.now().strftime("%Y%m%d_%H%M%S")
+    nombre_archivo = f"{dispositivo.nombre}_{fecha}.txt"
+    ruta_archivo = os.path.join(carpeta, nombre_archivo)
+
+    try:
+        with open(ruta_archivo, "w", encoding="utf-8") as f:
+            f.write(salida)
+    except Exception as e:
+        print(f"Error al guardar archivo: {e}")
+        return jsonify({"success": False, "message": f"Error al guardar archivo: {e}"}), 500
+
+    return jsonify({"success": True, "message": f"Backup guardado en {ruta_archivo}"})
+
 if __name__ == '__main__':
     # Crea las tablas si no existen (solo la primera vez)
-    #with app.app_context():
-        #db.create_all()
+    # with app.app_context():
+        # db.create_all()
     app.run(port=5000)

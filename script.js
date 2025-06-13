@@ -172,3 +172,23 @@ document.getElementById("btnEliminar").addEventListener("click", function () {
         .forEach((tr) => tr.classList.remove("selected"));
     });
 });
+
+document.getElementById("btnBackup").addEventListener("click", function () {
+  if (!dispositivoSeleccionado || !dispositivoSeleccionado.id) {
+    alert("Selecciona un dispositivo primero.");
+    return;
+  }
+  if (!confirm("¿Deseas realizar el backup de este dispositivo?")) {
+    return;
+  }
+  fetch(`http://localhost:5000/backup/${dispositivoSeleccionado.id}`, {
+    method: "POST",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert(data.message);
+    })
+    .catch((err) => {
+      alert("Error al realizar el backup: " + err);
+    });
+});

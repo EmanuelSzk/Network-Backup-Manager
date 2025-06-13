@@ -7,7 +7,8 @@ d. El software debe extraer los archivos de respaldo del dispositivo y almacenar
 e. El software debe eliminar automáticamente los respaldos en los dispositivos que superen los 6 meses.
 
 Objetivo General:
-Desarrollar una aplicación que permita la gestión automática de respaldos de configuraciones en dispositivos de red mediante conexión remota, almacenamiento y limpieza programada.
+Desarrollar una aplicación que permita la gestión automática de respaldos de configuraciones en dispositivos de red mediante conexión 
+remota, almacenamiento y limpieza programada.
 
 Objetivos Específicos:
 • Gestionar dispositivos a través de una interfaz intuitiva (ABM).
@@ -17,5 +18,5 @@ Objetivos Específicos:
 • Incorporar opciones para definir la frecuencia de ejecución.
 • Validar el sistema mediante pruebas funcionales.
 
-
-#para editar: cuando selecciono uno de los dispositivos en la lista de dispositivos , ese dispositivo se guarda en la variable dispositivo_seleccionado y ahi se muestran los detalles del dispositivo dispositivo_seleccionado , y que se guarden los cambios del dispositivo en la base de datos 
+Objetivo Principal
+Backups -> guarda configuracion de dispositivos -> en base de datos -> por periodicidad -> extraible a carpeta windows -> Mostrar Historial.
