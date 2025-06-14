@@ -181,12 +181,17 @@ document.getElementById("btnBackup").addEventListener("click", function () {
   if (!confirm("¿Deseas realizar el backup de este dispositivo?")) {
     return;
   }
+  // Obtener la carpeta del input
+  const carpeta = document.getElementById("carpeta").value.trim();
+
   fetch(`http://localhost:5000/backup/${dispositivoSeleccionado.id}`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ carpeta: carpeta }),
   })
     .then((res) => res.json())
     .then((data) => {
-      alert(data.message);
+      alert(data.message || data);
     })
     .catch((err) => {
       alert("Error al realizar el backup: " + err);
