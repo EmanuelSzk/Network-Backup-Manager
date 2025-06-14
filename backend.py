@@ -130,8 +130,14 @@ def backup_dispositivo(id):
     contrasena = dispositivo.contrasena
     puerto = dispositivo.puerto_ssh
 
+    # Obtener la carpeta enviada por el usuario
+    data = request.get_json()
+    carpeta = data.get("carpeta", "C:/backups/")
+    if not carpeta:
+        carpeta = "C:/backups/"
+
     # Comando típico para Cisco/IOS, adaptalo si usás otro sistema
-    comando = "show running-config"
+    comando = "/export"
 
     try:
         ssh = paramiko.SSHClient()
@@ -148,7 +154,6 @@ def backup_dispositivo(id):
         return jsonify({"success": False, "message": "No se pudo obtener la configuración"}), 500
 
     # Carpeta y nombre de archivo
-    carpeta = "C:/backups/"
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
     fecha = datetime.now().strftime("%Y%m%d_%H%M%S")
